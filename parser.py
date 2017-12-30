@@ -1,7 +1,9 @@
 import requests
+import json
 from bs4 import BeautifulSoup
 
 WeatherURL = "https://sinoptik.ua/погода-"
+BtcURL = "https://blockchain.info/ru/ticker"
 
 
 def get_html(url):
@@ -9,6 +11,7 @@ def get_html(url):
     return html
 
 
+# Weather
 def get_weather(html):
     soup = BeautifulSoup(html, "html.parser")
     data = []
@@ -26,19 +29,41 @@ def get_weather(html):
 
 
 def print_weather(weather_data):
+    print("-Погода-")
     print("Ночь:  {0} {1}".format(weather_data[0]["night"][0], weather_data[0]["night"][1]))
     print("Утро:  {0} {1}".format(weather_data[0]["morning"][0], weather_data[0]["morning"][1]))
     print("День:  {0} {1}".format(weather_data[0]["day"][0], weather_data[0]["day"][1]))
     print("Вечер: {0} {1}".format(weather_data[0]["evening"][0], weather_data[0]["evening"][1]))
     print(weather_data[1])
+    print()
+
+
+# Bitcoin
+def parse_bitcoin(raw_data):
+    json_parsed = json.loads(raw_data)
+    buy = json_parsed["USD"]["buy"]
+    sell = json_parsed["USD"]["sell"]
+    return [buy, sell]
+
+
+def print_bitcoin(value):
+    print("-Курс Bitcoin-")
+    print("Покупка: $", value[0],)
+    print("Продажа: $", value[1])
+    print()
 
 
 def main():
+    btc_json = get_html(BtcURL)
+    btc_value = parse_bitcoin(btc_json)
+    print_bitcoin(btc_value)
+
     city = input("Введите город: ").lower()
     weather_city_url = WeatherURL + city
     weather_html = get_html(weather_city_url)
     weather_data = get_weather(weather_html)
     print_weather(weather_data)
+
 
 if __name__ == '__main__':
     main()
