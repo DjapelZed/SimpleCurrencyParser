@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 
 WeatherURL = "https://sinoptik.ua/погода-"
 BtcURL = "https://blockchain.info/ru/ticker"
-
+CurrencyUrl = "https://api.fixer.io/latest?base="
+UahURL = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5"
 
 def get_html(url):
     html = requests.get(url).text
@@ -53,7 +54,32 @@ def print_bitcoin(value):
     print()
 
 
+# Currency
+def parse_currency(base_currency):
+    if base_currency == "uah":
+        raw_json = get_html(UahURL)
+        data = json.loads(raw_json)
+        exchange_rate_usd = [data[0]["buy"], data[0]["sale"]]
+        exchange_rate_eur = [data[1]["buy"], data[1]["sale"]]
+        exchange_rate_rur = [data[2]["buy"], data[2]["sale"]]
+        return [exchange_rate_usd, exchange_rate_eur, exchange_rate_rur, base_currency]
+    else:
+        pass
+
+
+def print_exchange_rate_currency(exchange_rate):
+    print("\tПокупка \tПродажа")
+    print("USD:\t{0}\t{1}".format(exchange_rate[0][0], exchange_rate[0][1]))
+    print("EUR:\t{0}\t{1}".format(exchange_rate[1][0], exchange_rate[0][1]))
+    print("RUR:\t{0}\t{1}".format(exchange_rate[2][0], exchange_rate[2][1]))
+    print()
+
+
 def main():
+    base_currency = input("Введите базовую валюту: ")
+    exchange_rate = parse_currency(base_currency)
+    print_exchange_rate_currency(exchange_rate)
+
     btc_json = get_html(BtcURL)
     btc_value = parse_bitcoin(btc_json)
     print_bitcoin(btc_value)
