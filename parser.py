@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 WeatherURL = "https://sinoptik.ua/погода-"
 BtcURL = "https://blockchain.info/ru/ticker"
-CurrencyUrl = "https://api.fixer.io/latest?base="
+CurrencyURL = "https://api.fixer.io/latest?base="
 UahURL = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5"
 
 def get_html(url):
